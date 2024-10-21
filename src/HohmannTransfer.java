@@ -1,3 +1,6 @@
+import java.util.HashMap;
+import java.util.Map;
+
 public class HohmannTransfer {
     public int planet;
     public static void main(String[] args) {

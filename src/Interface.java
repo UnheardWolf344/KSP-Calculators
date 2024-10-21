@@ -33,12 +33,28 @@ public class Interface extends JFrame implements ActionListener {
     JMenuItem[] bodies;
     JMenuBar menuBar;
     JTextPane bodySelection;
+    JButton newHohmannTransfer;
+
+    JTextField periapsisTF;
+    JTextField apoapsisTF;
+    JTextField TapoapsisTF;
+    JTextField TperiapsisTF;
+    JLabel apoapsisL;
+    JLabel periapsisL;
+    JLabel TperiapsisL;
+    JLabel TapoapsisL;
 
     Caret blank;
+
+    // visviva params
+    String body;
+    double ap, pe, tap, tpe;
 
     Interface() {
         super("Hohmann Calculator");
         setSize(500, 400);
+        setResizable(false);
+        setLayout(new GridBagLayout());
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -59,12 +75,8 @@ public class Interface extends JFrame implements ActionListener {
             }
         };
 
-        panel = new JPanel();
-
         menu();
         instructions();
-        add(panel);
-
     }
 
     void menu() {
@@ -134,37 +146,83 @@ public class Interface extends JFrame implements ActionListener {
         menuBar.add(planets);
         menuBar.add(moons);
         menuBar.add(stars);
-
-        setJMenuBar(menuBar);
-    }
-
-    void bodySelected(String body) {
-        for (int i = 0; i < menuBar.getMenuCount() - 1; i++) {
-            remove(menuBar.getMenu(i));
-        }
-        remove(menuBar);
-        setJMenuBar(null);
-        bodySelection.setText(body);
         revalidate();
     }
-    void instructions () {
-        bodySelection = new JTextPane();
+
+    void newHohmannTransfer () {
         bodySelection.setText("Choose a body!");
+        setJMenuBar(menuBar);
+        body = "";
+        revalidate();
+        ungetParams();
+    }
+
+    void bodySelected (String selectedBody) {
+        setJMenuBar(null);
+        bodySelection.setText(selectedBody);
+        body = selectedBody;
+        revalidate();
+        getParams();
+    }
+
+    void instructions () {
+        panel = new JPanel(new GridBagLayout());
+        bodySelection = new JTextPane();
         bodySelection.setFont(new Font("Roboto", Font.BOLD, 24));
-        bodySelection.setMargin(new Insets(50, 5, 5, 5));
+        bodySelection.setMargin(new Insets(5, 5, 5, 5));
         bodySelection.setCaret(blank);
         bodySelection.setEditable(false);
         bodySelection.setBackground(panel.getBackground());
+        bodySelection.setBounds(50, 50, 50, 50);
+
+        newHohmannTransfer = new JButton("New Hohmann Transfer");
+        newHohmannTransfer.addActionListener(this);
+
+//        bodySelection.setPreferredSize(new Dimension(200, 50));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor= GridBagConstraints.FIRST_LINE_START;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(bodySelection ,     gbc);
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.ABOVE_BASELINE;
+        panel.add(newHohmannTransfer, gbc);
+        add(panel);
+        newHohmannTransfer();
+    }
+
+    void getParams () {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor  = GridBagConstraints.FIRST_LINE_START;
+        gbc.gridx   = 0;
+        gbc.gridy   = 2;
+        apoapsisL   = new JLabel("Enter your current orbit's apoapsis here: ");
+        apoapsisTF  = new JTextField();
+        periapsisTF = new JTextField();
 
 
 
-        panel.add(bodySelection, BorderLayout.CENTER);
+        panel.add(apoapsisL, gbc);
+
+        gbc.gridx = 1;
+        apoapsisTF.setEditable(true);
+        apoapsisTF.setSize(20, 20);
+
+        panel.add(apoapsisTF, gbc);
+        revalidate();
+    }
+
+    void ungetParams () {
+        JComponent[] paramgetters = {apoapsisL, periapsisL, TapoapsisL, TperiapsisL, apoapsisTF, periapsisTF, TapoapsisTF, TperiapsisTF};
+        for (JComponent c : paramgetters) {
+            if (c != null)
+                panel.remove(c);
+        }
+        revalidate();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String source = e.getActionCommand();
-
         boolean exit = false;
         while (!exit) {
             for (JMenuItem i : bodies) {
@@ -172,7 +230,14 @@ public class Interface extends JFrame implements ActionListener {
                     System.out.println(i.getText() + " was tapped");
                     bodySelected(i.getText());
                     exit = true;
+                    break;
                 }
+            }
+
+            if (e.getActionCommand().equals("New Hohmann Transfer")) {
+                System.out.println("New Hohmann Transfer" + " was tapped");
+                exit = true;
+                newHohmannTransfer();
             }
         }
     }
