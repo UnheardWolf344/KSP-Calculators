@@ -1,6 +1,3 @@
-import java.util.HashMap;
-import java.util.Map;
-
 public class HohmannTransfer {
     public int planet;
     public static void main(String[] args) {
@@ -10,7 +7,7 @@ public class HohmannTransfer {
 //        visviva("Kerbin", 80000, 80000, 2863334, 2863334);
     }
 
-    static double visviva(String body, double ap, double pe, double tap, double tpe) {
+    public static double[] visviva(String body, double ap, double pe, double tap, double tpe) {
         double GM = 0;
         double rad = 0;
 
@@ -31,10 +28,8 @@ public class HohmannTransfer {
             case "Tylo"   : GM = Const.GM[13]; rad = Const.rad[13]; break;
             case "Bop"    : GM = Const.GM[14]; rad = Const.rad[14]; break;
             case "Pol"    : GM = Const.GM[15]; rad = Const.rad[15]; break;
-            case "Sarnus" : GM = Const.GM[16]; rad = Const.rad[16]; break;
+            case "Eeloo" :  GM = Const.GM[16]; rad = Const.rad[16]; break;
         }
-
-        System.out.println(   Math.sqrt(GM * ( (2 /  pe + rad) - ( 1/ ( (pe  +  ap + 2 * rad) / 2 ) ) ) )  );
 
         double v1 = Math.sqrt(GM * ((2 / ( pe + rad)) - (1/((pe  +  ap + 2 * rad)/2))));   //velocity at initial periapsis
         double v2 = Math.sqrt(GM * ((2 / ( pe + rad)) - (1/((pe  + tap + 2 * rad)/2))));   //velocity at periapsis after burn
@@ -44,8 +39,8 @@ public class HohmannTransfer {
         double firstBurn = v2 - v1;
         double secondBurn = v4 - v3;
 
-        System.out.printf("First Burn: %fm/s %nSecond Burn: %fm/s %nTotal delta-v:%fm/s %nHappy flying!", firstBurn, secondBurn, firstBurn + secondBurn);
-        return firstBurn + secondBurn;
+        System.out.printf("First Burn:    %.4fm/s %nSecond Burn:   %.4fm/s %nTotal delta-v: %.4fm/s %nVelocity at current periapsis: %.4fm/s %nVelocity at target apoapsis:   %.4fm/s %nHappy flying!", firstBurn, secondBurn, Math.abs(firstBurn + secondBurn), v1, v4);
+        return new double[]{firstBurn, secondBurn, Math.abs(firstBurn + secondBurn)};
     }
 }
 
@@ -67,7 +62,7 @@ class Const {
             2.8252800 * Math.pow(10, 12), //TyloGM
             2.4868349 * Math.pow(10, 9),  //BopGM
             7.2170208 * Math.pow(10, 8),  //PolGM
-            8.2089702 * Math.pow(10, 13)  //SarnusGM
+            7.4410815 * Math.pow(10, 10)  //EelooGM
     };
     static double[] rad = {
             261600000, //KerbolRad
@@ -86,7 +81,7 @@ class Const {
             600000,    //TyloRad
             65000,     //BopRad
             44000,     //PolRad
-            5300000,   //SarnusRad
+            210000,    //EelooRad
     };
 }
 // keostationary == 2,863,334m
