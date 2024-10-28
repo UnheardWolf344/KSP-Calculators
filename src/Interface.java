@@ -54,9 +54,11 @@ public class Interface extends JFrame {
     JTextField burn2;
     JTextField totdv;
 
-    JLabel Lburn1;
-    JLabel Lburn2;
-    JLabel Ltotdv;
+    JTextField Lburn1;
+    JTextField Lburn2;
+    JTextField Ltotdv;
+
+    JTextArea error;
     //</editor-fold>
 
     Caret blank = new DefaultCaret() {
@@ -78,7 +80,7 @@ public class Interface extends JFrame {
 
     Interface() {
         super("Hohmann Transfer Calculator");
-        setSize(500, 400);
+        setSize(600, 500);
         setResizable(false);
         setLayout(new GridBagLayout());
         setLocationRelativeTo(null);
@@ -238,6 +240,39 @@ public class Interface extends JFrame {
         TperiapsisTF.addActionListener(orbitValueInput);
 
         calculate = new JButton("Calculate!");
+
+        Lburn1 = new JTextField("delta-v of the first burn: ");
+        Lburn2 = new JTextField("delta-v of the second burn: ");
+        Ltotdv = new JTextField("Total delta-v of the maneuver: ");
+
+        Lburn1.setBorder(null);
+        Lburn1.setCaret(blank);
+        Lburn1.setEditable(false);
+        Lburn2.setBorder(null);
+        Lburn2.setCaret(blank);
+        Lburn2.setEditable(false);
+        Ltotdv.setBorder(null);
+        Ltotdv.setCaret(blank);
+        Ltotdv.setEditable(false);
+
+        burn1 = new JTextField();
+        burn2 = new JTextField();
+        totdv = new JTextField();
+
+
+        burn1.setBorder(null);
+        burn1.setCaret(blank);
+        burn1.setEditable(false);
+
+        burn2.setBorder(null);
+        burn2.setCaret(blank);
+        burn2.setEditable(false);
+
+        totdv.setBorder(null);
+        totdv.setCaret(blank);
+        totdv.setEditable(false);
+
+        error = new JTextArea();
     }
 
     void getOrbitalParams() {
@@ -297,17 +332,23 @@ public class Interface extends JFrame {
 
         for (JComponent c : Lparamgetters) {
             if (c != null) {
-                panel.remove(c);
+                while (c.isValid()) {
+                    panel.remove(c);
+                }
             }
         }
 
         if (calculate.isVisible())
             panel.remove(calculate);
 
+        error.setText("");
+
         for (JTextField tf : TFparamgetters) {
             if (tf != null) {
-                tf.setText("");
-                panel.remove(tf);
+                while (tf.isValid()) {
+                    tf.setText("");
+                    panel.remove(tf);
+                }
             }
         }
 
@@ -319,25 +360,10 @@ public class Interface extends JFrame {
 
         DecimalFormat df = new DecimalFormat(("#." + String.format("%0" + 3 + "d", 0).replace("0", "#")));
 
-        burn1 = new JTextField(df.format(ans[0]) + "m/s");
-        burn2 = new JTextField(df.format(ans[1]) + "m/s");
-        totdv = new JTextField(df.format(ans[2]) + "m/s");
+        burn1.setText(df.format(ans[0]) + "m/s");
+        burn2.setText(df.format(ans[1]) + "m/s");
+        totdv.setText(df.format(ans[2]) + "m/s");
 
-        burn1.setBorder(null);
-        burn1.setCaret(blank);
-        burn1.setEditable(false);
-
-        burn2.setBorder(null);
-        burn2.setCaret(blank);
-        burn2.setEditable(false);
-
-        totdv.setBorder(null);
-        totdv.setCaret(blank);
-        totdv.setEditable(false);
-
-        Lburn1 = new JLabel("delta-v of the first burn: ");
-        Lburn2 = new JLabel("delta-v of the second burn: ");
-        Ltotdv = new JLabel("Total delta-v of the maneuver: ");
         Lburn1.setHorizontalAlignment(SwingConstants.RIGHT);
         Lburn2.setHorizontalAlignment(SwingConstants.RIGHT);
         Ltotdv.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -349,7 +375,6 @@ public class Interface extends JFrame {
         gbc.anchor = GridBagConstraints.LAST_LINE_END;
 
         gbc.gridx = 0;
-
 
         gbc.gridy = 15;
         panel.add(Lburn1, gbc);
@@ -377,6 +402,24 @@ public class Interface extends JFrame {
 
     }
 
+    void dispError (String err) {
+        error.setText(err);
+        error.setWrapStyleWord(true);
+        error.setLineWrap(true);
+
+        error.setBorder(null);
+        error.setCaret(blank);
+        error.setEditable(false);
+        error.setBackground(panel.getBackground());
+        error.setColumns(15);
+//
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+
+        panel.add(error, gbc);
+
+        revalidate();
+    }
     //<editor-fold desc="actions">
 
     public Action mItemSelect = new AbstractAction() {
@@ -412,33 +455,34 @@ public class Interface extends JFrame {
                 try {
                     pe = Long.parseLong(periapsisTF.getText());
                 } catch (NumberFormatException exc) {
-                    exal.add("pe");
+                    exal.add("Current Orbit Periapsis");
                 }
                 try {
                     ap = Long.parseLong(apoapsisTF.getText());
                 } catch (NumberFormatException exc) {
-                    exal.add("ap");
+                    exal.add("Current Orbit Apoapsis");
                 }
                 try {
                     tap = Long.parseLong(TapoapsisTF.getText());
                 } catch (NumberFormatException exc) {
-                    exal.add("tap");
+                    exal.add("Target Orbit Apoapsis");
                 }
                 try {
                     tpe = Long.parseLong(TperiapsisTF.getText());
                 } catch (NumberFormatException exc) {
-                    exal.add("tpe");
+                    exal.add("Target Orbit Periapsis");
                 }
                 if (!exal.isEmpty()) {
                     StringBuilder sb = new StringBuilder("The following inputs are not numbers: ");
                     for (String s : exal) {
-                        sb.append(s).append(tpe);
+                        sb.append(s).append(" ");
                     }
-                    System.out.println(sb);
+                    dispError(sb.toString());
                 } else if (pe > ap || tpe > tap) {
-                    System.out.println("The periapsides need to be lower than the apoapsides!");
+                    dispError("The periapsides need to be lower than the apoapsides!".toString());
                 } else {
                     calculate(body, ap, pe, tap, tpe);
+                    error.setText("");
                 }
             }
         }

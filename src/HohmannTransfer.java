@@ -1,3 +1,5 @@
+import java.util.Hashtable;
+
 public class HohmannTransfer {
     public int planet;
     public static void main(String[] args) {
