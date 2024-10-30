@@ -1,14 +1,13 @@
 import javax.swing.*;
 import javax.swing.text.Caret;
 import javax.swing.text.DefaultCaret;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Interface extends JFrame {
+
     //<editor-fold desc="public variables">
     JMenuItem Kerbol;
     JMenuItem[] starArr;
@@ -360,6 +359,8 @@ public class Interface extends JFrame {
 
         DecimalFormat df = new DecimalFormat(("#." + String.format("%0" + 3 + "d", 0).replace("0", "#")));
 
+        System.out.printf("First Burn:    %.4fm/s %nSecond Burn:   %.4fm/s %nTotal delta-v: %.4fm/s %nHappy flying!", ans[0], ans[1], Math.abs(ans[0] + ans[1]));
+
         burn1.setText(df.format(ans[0]) + "m/s");
         burn2.setText(df.format(ans[1]) + "m/s");
         totdv.setText(df.format(ans[2]) + "m/s");
@@ -420,6 +421,7 @@ public class Interface extends JFrame {
 
         revalidate();
     }
+
     //<editor-fold desc="actions">
 
     public Action mItemSelect = new AbstractAction() {
@@ -479,7 +481,7 @@ public class Interface extends JFrame {
                     }
                     dispError(sb.toString());
                 } else if (pe > ap || tpe > tap) {
-                    dispError("The periapsides need to be lower than the apoapsides!".toString());
+                    dispError("The periapsides need to be lower than the apoapsides!".toString()); // makes some bug not happen IDK
                 } else {
                     calculate(body, ap, pe, tap, tpe);
                     error.setText("");

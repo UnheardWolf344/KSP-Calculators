@@ -1,12 +1,8 @@
-import java.util.Hashtable;
-
 public class HohmannTransfer {
-    public int planet;
     public static void main(String[] args) {
         Interface itf;
         itf = new Interface();
         itf.setVisible(true);
-//        visviva("Kerbin", 80000, 80000, 2863334, 2863334);
     }
 
     public static double[] visviva(String body, double ap, double pe, double tap, double tpe) {
@@ -41,7 +37,6 @@ public class HohmannTransfer {
         double firstBurn = v2 - v1;
         double secondBurn = v4 - v3;
 
-        System.out.printf("First Burn:    %.4fm/s %nSecond Burn:   %.4fm/s %nTotal delta-v: %.4fm/s %nVelocity at current periapsis: %.4fm/s %nVelocity at target apoapsis:   %.4fm/s %nHappy flying!", firstBurn, secondBurn, Math.abs(firstBurn + secondBurn), v1, v4);
         return new double[]{firstBurn, secondBurn, Math.abs(firstBurn + secondBurn)};
     }
 }
@@ -66,6 +61,7 @@ class Const {
             7.2170208 * Math.pow(10, 8),  //PolGM
             7.4410815 * Math.pow(10, 10)  //EelooGM
     };
+
     static double[] rad = {
             261600000, //KerbolRad
             250000,    //MohoRad
@@ -86,4 +82,5 @@ class Const {
             210000,    //EelooRad
     };
 }
+
 // keostationary == 2,863,334m
